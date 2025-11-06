@@ -23,5 +23,5 @@ def grad_function(x):
 if __name__ == "__main__":
     init_point = np.array([1.0, 1.0, 1.0])
     optimal_point, optimal_value = steepest_descent(function, grad_function, init_point)
-    print("Optimal Point:", optimal_point)
-    print("Optimal Value:", optimal_value)
+    print("Ponto encontrado:", optimal_point)
+    print("Valor ótimo:", optimal_value)
