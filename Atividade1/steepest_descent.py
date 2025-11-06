@@ -1,5 +1,5 @@
 import numpy as np
-def steepest_descent(function, gradient, x_init, alpha = 0.2, tol = 1e-6, num_iter = 1000):
+def steepest_descent(function, gradient, x_init, alpha = 0.01, tol = 1e-6, num_iter = 1000):
     x_k = x_init
     for k in range(num_iter):
         grad_k = gradient(x_k)
@@ -11,17 +11,22 @@ def steepest_descent(function, gradient, x_init, alpha = 0.2, tol = 1e-6, num_it
 
 
 def function(x):
-    for i in range(len(x)):
-        return np.sum(x**2)
+    d = x[0]
+    fs = x[1]
+
+    loss = 1/(1+d**2) + fs/(10000) * np.sin(10*d) + 0.1*(d-0.5)**2
+    return loss
 
 def grad_function(x):
     grad = np.zeros_like(x)
-    for i in range(len(x)):
-        grad[i] = 2 * x[i]
+    d = x[0]
+    fs = x[1]
+    grad[0] = -2*d/(1+d**2)**2 - fs*np.cos(10*d)/(1000) + 0.2*(d-0.5)
+    grad[1] = np.sin(10*d)/(10000)
     return grad
 
 if __name__ == "__main__":
-    init_point = np.array([1.0, 1.0, 1.0])
+    init_point = np.array([0.3, 5000])
     optimal_point, optimal_value = steepest_descent(function, grad_function, init_point)
     print("Ponto encontrado:", optimal_point)
     print("Valor ótimo:", optimal_value)
