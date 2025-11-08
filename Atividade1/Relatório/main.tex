@@ -1,0 +1,234 @@
+% Fonte do enunciado citado: :contentReference[oaicite:0]{index=0}
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{physics}
+\usepackage{graphicx}
+\graphicspath{{figs/}}
+\usepackage{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=3cm}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{physics}
+\captionsetup{font=small,labelfont=bf}
+
+\onehalfspacing
+
+% cabeçalho/rodapé
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{14.49998pt}
+\lhead{Trabalho Otimização (Unidade 1)}
+\rhead{Otimização Aplicada em Sistemas de Engenharia}
+\cfoot{\thepage}
+
+% Metadados do documento
+\title{\LARGE Otimização Aplicada em Sistemas de Engenharia: \\ Comparação de Métodos de 1ª e 2ª Ordem}
+\author{
+\begin{tabular}{c}
+Caio França Santos\\
+Shaista\\
+Ricardo Messala\\
+Ricardo Machado\\
+João Lucas
+\end{tabular}
+}
+\date{Salvador -- BA \\ 2025}
+\begin{document}
+
+% ---------- CAPA estilo UFBA acadêmica ----------
+\begin{titlepage}
+    \centering
+    \vspace*{1.0 cm}
+    {\Large Universidade Federal da Bahia}\\[0.5cm]
+    {\large PPGEEC -- Programa de Pós-Graduação em Engenharia Elétrica e Computação}\\[1.5cm]
+    {\Large \textbf{Trabalho Otimização (Unidade 1)}}\\[1.5cm]
+    {\LARGE \textbf{Otimização Aplicada em Sistemas de Engenharia: \\ Comparação de Métodos de 1ª e 2ª Ordem}}\\[2.0cm]
+    \begin{flushleft}
+        \textbf{Equipe:}\\[0.2cm]
+        Caio França Santos\\
+        Shaista\\
+        Ricardo Messala\\
+        Ricardo Machado\\
+        João Lucas
+    \end{flushleft}
+    \vfill
+    \begin{flushright}
+        Salvador -- BA\\
+        2025
+    \end{flushright}
+\end{titlepage}
+
+\thispagestyle{empty}
+\clearpage
+
+% Sumário
+\tableofcontents
+\clearpage
+
+% ---------- Introdução ----------
+\section{Introdução}
+Este relatório apresenta os resultados e a análise comparativa das
+implementações dos métodos de otimização solicitados na avaliação intitulada
+``Avaliação 1B -- Otimização Aplicada'' (documento fornecido pelo professor)
+para os \textbf{Problemas 2 e 4}. O enunciado completo dos problemas
+encontra-se no documento da avaliação. Para referência ao enunciado do
+professor: Avaliação 1B -- Otimização Aplicada.
+:contentReference[oaicite:1]{index=1}
+
+O objetivo geral do trabalho é comparar métodos de primeira ordem (ex.:
+Steepest Descent) com métodos de segunda ordem ou quase-segunda ordem (Newton,
+Gauss-Newton, BFGS) em termos de:
+\begin{itemize}
+    \item taxa de convergência (curvas \(\log \lVert g \rVert\) vs iterações);
+    \item custo computacional (tempo total e custo por iteração);
+    \item robustez frente a ruído e condição inicial;
+    \item qualidade da solução para os problemas não-lineares propostos.
+\end{itemize}
+
+A seleção dos problemas para este relatório foi:
+\begin{center}
+    \textbf{Problema 2 -- Estimação de Parâmetros de Circuito (NLS Sintético)} \\
+    \textbf{Problema 4 -- Otimização do Rendimento de Conversor DC-DC (Simulação de Perdas)}
+\end{center}
+
+Cada seção que segue contém: (i) formulação do problema; (ii) descrição da
+geração de dados sintéticos; (iii) implementação dos algoritmos comparados;
+(iv) resultados numéricos e gráficos (placeholders); (v) discussão e conclusões
+parciais.
+
+\clearpage
+\section{Problema 4 -- Otimização do Rendimento de Conversor DC-DC (Simulação de Perdas)}
+
+\subsection{Enunciado (referência)}
+O Problema 4 propõe otimizar os parâmetros de controle \(x = [D, f_s]^T\)
+(Ciclo de trabalho \(D\) e frequência de chaveamento \(f_s\)) para minimizar
+uma função de perdas sintética:
+\[
+    \min_{D,f_s} L(D,f_s) = \frac{1}{1+D^2} + \frac{f_s}{10000}\sin(10D) + 0.1\,(D-0.5)^2,
+\]
+com \(0 < D < 1\) e \(f_s>0\). O objetivo é comparar o comportamento de um
+método de primeira ordem (Steepest Descent) e um método quase-Newton (BFGS).
+(Enunciado: Avaliação 1B -- Otimização Aplicada).
+:contentReference[oaicite:3]{index=3}
+
+\subsection{Formulação e escolhas numéricas}
+\begin{itemize}
+    \item escolha de ponto inicial \((D_0,f_{s0})\) dentro de domínio razoável (ex.:
+          \(D_0=0.3, f_{s0}=5000\) Hz);
+    \item limites práticos (se desejado, tratar por penalidade externa ou simplesmente
+          manter o ponto inicial interior);
+    \item normalização das variáveis (opcional) para melhorar condicionamento numérico.
+\end{itemize}
+
+\subsection{Métodos implementados}
+\begin{enumerate}
+    \item \textbf{Steepest Descent (SD)} com busca de passo exata/armijo ou outro esquema de linhas;
+    \item \textbf{BFGS} (biblioteca \texttt{scipy.optimize} ou implementação própria) para observar aceleração superlinear na convergência.
+\end{enumerate}
+
+\vspace{0.2cm}
+\noindent\textbf{Placeholder (figura)}: Trajetória das variáveis \(D\) e \(f_s\) no plano de busca.
+
+\subsection{Fundamentação teórica - Steepest Descent}
+
+O método de otimização Steepest-Descent é fundamentado com base no vetor
+gradiente representar a direção de maior crescimento de uma função
+$f(\mathbf{x})$ num determinado ponto $\mathbf{x}_k$. Tal comportamento é
+justificado em CITAR LIVRO ANDREAS através da Série de Taylor de uma função de
+múltiplas variáveis.
+
+\begin{equation}
+    f + \Delta f = f(\mathbf{x} + \boldsymbol\delta) \approx f(\mathbf{x}) + \nabla f^T \boldsymbol\delta + \frac{1}{2} \boldsymbol\delta^T H \boldsymbol\delta
+\end{equation}
+
+Chamando o vetor gradiente de $\mathbf{g} = \nabla f$ e fazendo
+$\norm{\mathbf{\delta}} \to 0$, a variação na função f devido à variação em
+$\boldsymbol\delta$ pode ser aproximada por (\ref{eq:delta_f}).
+
+\begin{equation}
+    \Delta f \approx \mathbf{g}^T \boldsymbol\delta
+    \label{eq:delta_f}
+\end{equation}
+
+Dessa forma, a variação $\Delta f$ pode ser aproximada pelo produto escalar
+entre o vetor gradiente e o vetor $\boldsymbol\delta$ como descrito na equação
+(\ref{eq:delta_f_prod_escalar}), em que $\theta$ representa o ângulo entre os
+vetores.
+
+\begin{equation}
+    \Delta f \approx \norm{\mathbf{g}} \norm{\boldsymbol\delta} \cos(\theta)
+    \label{eq:delta_f_prod_escalar}
+\end{equation}
+
+Com base na equação (\ref{eq:delta_f_prod_escalar}), conclui-se que o maior
+crescimento na função $f(\mathbf{x})$ ocorre quando $\boldsymbol\delta$ está na
+mesma direção do vetor gradiente ($\theta = 0$). De forma análoga, o maior
+decrescimento ocorre quando $\boldsymbol\delta$ tem sentido oposto ao gradiente
+($\theta = \pi$). As direções de maior crescimento e maior decrescimento são
+representadas na figura \ref{fig:dir_gradiente}.
+
+\begin{figure}[h]
+    \centering
+    \caption{Repreesentação das direções de maior crescimento e maior decrescimento.}
+    \includegraphics[width=0.5\textwidth]{./figuras/dir_gradiente.png} \\
+    Fonte: CITAR ANDREAS
+    \label{fig:dir_gradiente}
+\end{figure}
+
+% ---------- Resultados combinados e Análise de Custo Computacional ----------
+
+\subsection{Resumo do Algoritmo.}
+
+Passo 1: Escolher a condição inicial $x_0$, a tolerância $\epsilon$, o tamanho
+do passo inicial $\alpha_0$. \\ Passo 2: Se $k > \text{num\_iterações}$ =>
+Retornar $x_k$. Caso contrário => Continuar.\\ Passo 3: Calcular o gradiente
+$g_k = \nabla f(x_k)$ e fazer $d_k = -g_k$ \\ Passo 4: Encontrar o $\alpha_k$
+que minimiza $f(x_k - \alpha_k g_k)$ \\ Passo 5: Fazer $x_{k+1} = x_k -
+    \alpha_k g_k$ \\ Passo 6: Se $\norm {\alpha_k g_k} < \epsilon$ => Retornar
+$x_k$. Caso contrário => Fazer $k \to k+1$ e voltar para o passo 2. \\
+
+\clearpage
+\section{Análise Combinada e Custo Computacional}
+
+Inclua aqui tabelas comparativas que contenham, para cada experimento /
+semente:
+\begin{itemize}
+    \item método;
+    \item número de iterações;
+    \item tempo de execução total (s);
+    \item \(\lVert g_{\text{final}}\rVert\);
+    \item erro na estimativa (quando aplicável);
+    \item número de avaliações de função / gradiente / Hessiana.
+\end{itemize}
+
+Exemplo de tabela (placeholder):
+
+% ---------- Conclusões ----------
+\clearpage
+\section{Considerações finais e próximos passos}
+
+No espaço final do relatório você deve sintetizar:
+\begin{itemize}
+    \item principais conclusões quantitativas (quem convergiu mais rápido, custo total,
+          robustez);
+    \item recomendações práticas (quando preferir Gauss-Newton vs Newton; quando BFGS
+          compensa);
+    \item limitações do estudo (ex.: dimensão pequena, geração de dados sintéticos e
+          sensibilidade ao ruído);
+    \item sugestões para trabalho futuro (ex.: experimentos com condicionamento,
+          diferentes níveis de ruído, implementação em Colab com reprodutibilidade).
+\end{itemize}
+
+% ---------- Referências ----------
+\clearpage
+\bibliographystyle{ieeetr}
+\bibliography{refs}
+
+\end{document}

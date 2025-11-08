@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from typing import Callable
 
 def steepest_descent(function:Callable, gradient:Callable, x_init:np.ndarray, alpha = 0.01, tol = 1e-6, num_iter = 1000):
@@ -66,3 +67,14 @@ if __name__ == "__main__":
     optimal_point, optimal_value = steepest_descent(function, grad_function, init_point)
     print("Ponto encontrado:", optimal_point)
     print("Valor ótimo:", optimal_value)
+    d_range = np.linspace(0,1,100)
+    fs_range = np.linspace(0,20000,200)  # reduced resolution to keep mesh size reasonable
+    D, FS = np.meshgrid(d_range, fs_range)
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+
+    # Plot the surface
+    Z = function(np.array([D, FS]))
+    ax.plot_surface(D, FS, Z, cmap='viridis')
+
+    plt.show()
