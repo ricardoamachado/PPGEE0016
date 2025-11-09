@@ -41,7 +41,7 @@ def backtracking(function:Callable, step:float, x_k:np.ndarray, grad_k:np.ndarra
     """
     f_x = function(x_k)
     while function(x_k - step * grad_k) >= (f_x - c * step * np.linalg.norm(grad_k)**2):
-        step *= 0.5
+        step *= 0.3
         if step < tol:
             break
 
@@ -58,12 +58,21 @@ def grad_function(x):
     grad = np.zeros_like(x)
     d = x[0]
     fs = x[1]
-    grad[0] = -2*d/(1+d**2)**2 - fs*np.cos(10*d)/(1000) + 0.2*(d-0.5)
+    grad[0] = -2*d/(1+d**2)**2 + fs*np.cos(10*d)/(1000) + 0.2*(d-0.5)
     grad[1] = np.sin(10*d)/(10000)
     return grad
 
+def function_square(x):
+    return x[0]**2 + x[1]**2
+
+def grad_function_square(x):
+    grad = np.zeros_like(x)
+    grad[0] = 2*x[0]
+    grad[1] = 2*x[1]
+    return grad
+
 if __name__ == "__main__":
-    init_point = np.array([0.3, 10000])
+    init_point = np.array([0.5, 10000])
     optimal_point, optimal_value = steepest_descent(function, grad_function, init_point)
     print("Ponto encontrado:", optimal_point)
     print("Valor ótimo:", optimal_value)

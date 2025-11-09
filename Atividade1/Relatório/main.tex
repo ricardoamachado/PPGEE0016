@@ -141,8 +141,8 @@ método de primeira ordem (Steepest Descent) e um método quase-Newton (BFGS).
 O método de otimização Steepest-Descent é fundamentado com base no vetor
 gradiente representar a direção de maior crescimento de uma função
 $f(\mathbf{x})$ num determinado ponto $\mathbf{x}_k$. Tal comportamento é
-justificado em CITAR LIVRO ANDREAS através da Série de Taylor de uma função de
-múltiplas variáveis.
+justificado em \cite{Antoniou2021-ee} através da Série de Taylor de uma função
+de múltiplas variáveis.
 
 \begin{equation}
     f + \Delta f = f(\mathbf{x} + \boldsymbol\delta) \approx f(\mathbf{x}) + \nabla f^T \boldsymbol\delta + \frac{1}{2} \boldsymbol\delta^T H \boldsymbol\delta
@@ -178,21 +178,43 @@ representadas na figura \ref{fig:dir_gradiente}.
     \centering
     \caption{Repreesentação das direções de maior crescimento e maior decrescimento.}
     \includegraphics[width=0.5\textwidth]{./figuras/dir_gradiente.png} \\
-    Fonte: CITAR ANDREAS
+    Fonte: \cite{Antoniou2021-ee}
     \label{fig:dir_gradiente}
 \end{figure}
 
-% ---------- Resultados combinados e Análise de Custo Computacional ----------
+O algoritmo de steepest descent consiste em realizar o procedimento iterativo
+$\mathbf{x}_{k+1} = \mathbf{x}_{k} - \alpha_k \mathbf{g}_k$, determinando em
+cada iteração $k$ o valor de $\alpha_k$ que resulta no maior decrescimento em
+$f(\mathbf{x})$, procedimento detalhado na seção \ref{backtracking}. O
+algoritmo é executado até $k$ atingir o número máximo de iterações
+arbitradas($\mathrm{max_{iter}}$) ou então se a norma do vetor $\alpha_k
+    \mathbf{g}_k$ for menor que a tolerância $\epsilon$.
 
-\subsection{Resumo do Algoritmo.}
+\subsection{Algoritmo de backtracking.} \label{backtracking}
 
-Passo 1: Escolher a condição inicial $x_0$, a tolerância $\epsilon$, o tamanho
-do passo inicial $\alpha_0$. \\ Passo 2: Se $k > \text{num\_iterações}$ =>
-Retornar $x_k$. Caso contrário => Continuar.\\ Passo 3: Calcular o gradiente
-$g_k = \nabla f(x_k)$ e fazer $d_k = -g_k$ \\ Passo 4: Encontrar o $\alpha_k$
-que minimiza $f(x_k - \alpha_k g_k)$ \\ Passo 5: Fazer $x_{k+1} = x_k -
-    \alpha_k g_k$ \\ Passo 6: Se $\norm {\alpha_k g_k} < \epsilon$ => Retornar
-$x_k$. Caso contrário => Fazer $k \to k+1$ e voltar para o passo 2. \\
+O custo computacional de executar o processo de otimização unidimdensional ()
+com um algortimo de \emph{line search} exato para cada iteração do
+\emph{steepest descent} é elevado. Consequentemente, utiliza-se o algortimo de
+\emph{backtracking} para obter um tamanho do passo $\alpha_k$ que gere um
+decrescimento suficiente em cada iteração.
+
+As condições de Goldstein descritas em CITAR LIVRO definem critérios para que o
+tamanho do passo $\alpha$ resulte num decrescimento suficiente sem ser pequeno
+demais.
+
+Com base nas condições de Goldstein, define-se o algoritmo de
+\emph{backtracking line search} cujo passo a passo é listado abaixo.
+
+\subsection{Resumo do Algoritmo de Steepest Descent.}
+
+Passo 1: Escolher a condição inicial $\mathbf{x}_0$, a tolerância $\epsilon$, o
+tamanho do passo inicial $\alpha_0$. \\ Passo 2: Se $k > \mathrm{max_{iter}}$
+=> Retornar $\mathbf{x}_k$. Caso contrário => Continuar.\\ Passo 3: Calcular o
+gradiente $\mathbf{g}_k = \nabla f(\mathbf{x}_k)$. \\ Passo 4: Encontrar o
+$\alpha_k$ que minimiza $f(\mathbf{x}_k - \alpha_k \mathbf{g}_k)$ \\ Passo 5:
+Fazer $\mathbf{x}_{k+1} =\mathbf{x}_k -\alpha_k \mathbf{g}_k$ \\ Passo 6: Se
+$\norm {\alpha_k \mathbf{g}_k} < \epsilon$ => Retornar $\mathbf{x}_k$. Caso
+contrário => Fazer $k \to k+1$ e voltar para o passo 2. \\
 
 \clearpage
 \section{Análise Combinada e Custo Computacional}

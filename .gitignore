@@ -20,3 +20,5 @@ wheels/
 *.fls
 *.toc
 *.out
+*.bbl
+*.blg
