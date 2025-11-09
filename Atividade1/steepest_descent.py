@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Callable
 
-def steepest_descent(function:Callable, gradient:Callable, x_init:np.ndarray, alpha = 0.01, tol = 1e-6, num_iter = 1000):
+def steepest_descent(function:Callable, gradient:Callable, x_init:np.ndarray, alpha = 0.01, tol = 1e-8, num_iter = 1000):
     """Algoritmo do Steepest Descent (Gradiente Descendente)
     Inputs:
         function: função objetivo a ser minimizada
@@ -41,7 +41,8 @@ def backtracking(function:Callable, step:float, x_k:np.ndarray, grad_k:np.ndarra
     """
     f_x = function(x_k)
     while function(x_k - step * grad_k) >= (f_x - c * step * np.linalg.norm(grad_k)**2):
-        step *= 0.3
+        # Fator de contração do passo = 0.5
+        step *= 0.5
         if step < tol:
             break
 
@@ -62,17 +63,8 @@ def grad_function(x):
     grad[1] = np.sin(10*d)/(10000)
     return grad
 
-def function_square(x):
-    return x[0]**2 + x[1]**2
-
-def grad_function_square(x):
-    grad = np.zeros_like(x)
-    grad[0] = 2*x[0]
-    grad[1] = 2*x[1]
-    return grad
-
 if __name__ == "__main__":
-    init_point = np.array([0.5, 10000])
+    init_point = np.array([0.2, 3000])
     optimal_point, optimal_value = steepest_descent(function, grad_function, init_point)
     print("Ponto encontrado:", optimal_point)
     print("Valor ótimo:", optimal_value)

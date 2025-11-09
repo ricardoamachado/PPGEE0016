@@ -192,18 +192,47 @@ arbitradas($\mathrm{max_{iter}}$) ou então se a norma do vetor $\alpha_k
 
 \subsection{Algoritmo de backtracking.} \label{backtracking}
 
-O custo computacional de executar o processo de otimização unidimdensional ()
-com um algortimo de \emph{line search} exato para cada iteração do
-\emph{steepest descent} é elevado. Consequentemente, utiliza-se o algortimo de
-\emph{backtracking} para obter um tamanho do passo $\alpha_k$ que gere um
-decrescimento suficiente em cada iteração.
+O custo computacional de executar o processo de otimização unidimdensional
+(\ref{eq:alpha_otim}) com um algortimo de \emph{line search} exato para cada
+iteração do \emph{steepest descent} é elevado. Consequentemente, utiliza-se o
+algortimo de \emph{backtracking} para obter um tamanho do passo $\alpha_k$ que
+gere um decrescimento suficiente em cada iteração.
 
-As condições de Goldstein descritas em CITAR LIVRO definem critérios para que o
-tamanho do passo $\alpha$ resulte num decrescimento suficiente sem ser pequeno
-demais.
+\begin{equation}
+    \min_\alpha f(\mathbf{x} + \alpha \mathbf{d})
+    \label{eq:alpha_otim}
+\end{equation}
 
-Com base nas condições de Goldstein, define-se o algoritmo de
-\emph{backtracking line search} cujo passo a passo é listado abaixo.
+As condições de Goldstein descritas em \cite{Nocedal2006} definem critérios
+para que o tamanho do passo $\alpha_k$ resulte num decrescimento suficiente sem
+ser pequeno demais para $0 \leq c < \frac{1}{2}$. A equação (\ref{eq:armijo})
+também é chamada de Condição de Armijo \cite{Albanese2023}.
+
+\begin{equation}
+    f(\mathbf{x}_k + \alpha_k \mathbf{d_k}) \leq f(\mathbf{x}_k) + c \cdot \alpha_k \mathbf{g_k}^T \mathbf{d_k}
+    \label{eq:armijo}
+\end{equation}
+
+\begin{equation}
+    f(\mathbf{x}_k + \alpha_k \mathbf{d_k}) \geq f(\mathbf{x}_k) + \left(1-c\right) \cdot \alpha_k \mathbf{g_k}^T \mathbf{d_k}
+    \label{eq:goldstein}
+\end{equation}
+
+Por fim, como a direção adotada no Steepest Descent é contrária ao gradiente
+tem-se que $\mathbf{d_k} = -\mathbf{g_k}$. Dessa forma, a condição de Armijo
+reduz-se para (\ref{eq:armijo2}).
+
+\begin{equation}
+    f(\mathbf{x}_k - \alpha_k \mathbf{g_k}) \leq f(\mathbf{x}_k) - c \cdot \alpha_k \norm{\mathbf{g}_k}^2
+    \label{eq:armijo2}
+\end{equation}
+
+Com base nas condição de Armijo, define-se o algoritmo de \emph{backtracking
+    line search} cujo passo a passo é listado abaixo.\\ Passo 1: Definir o passo
+inicial $\alpha$, o fator de contração $\rho$ e o parâmetro de armijo $0 \leq c
+    < \frac{1}{2}$. \\ Passo 2: Enquanto $f(\mathbf{x}_k - \alpha \mathbf{g_k}) >
+    f(\mathbf{x}_k) - c \cdot \alpha \norm{\mathbf{g}_k}^2$, fazer $\alpha \to
+    \frac{\alpha}{\rho}$. \\ Passo 3: Retornar $\alpha_k = \alpha$
 
 \subsection{Resumo do Algoritmo de Steepest Descent.}
 
