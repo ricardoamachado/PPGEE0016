@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Callable
 from scipy.optimize import minimize
+from matplotlib.ticker import FormatStrFormatter
 import time
 
 
@@ -92,98 +93,102 @@ def callback_bfgs(xk, *args):
 
 def main():
     fun = function
-    x0 = np.array([0.3, 15000.0])  # Ponto inicial (D, fs)
+    num_loops = 5
+    np.random.seed(1)
+    for loop in range(num_loops):
+        x0 = np.array([np.random.uniform(0, 1), np.random.normal(20000, 5000)])
 
 
-    print("Iniciando a otimização com BFGS...")
-    print("Função: loss = 1/(1+d**2) + fs/10000 * sin(10*d) + 0.1*(d-0.5)**2")
-    print(f"Ponto inicial (D, fs): {x0}")
-    num_iter = 1000
+        print("Iniciando a otimização com BFGS...")
+        print("Função: loss = 1/(1+d**2) + fs/10000 * sin(10*d) + 0.1*(d-0.5)**2")
+        print(f"Ponto inicial (D, fs): {x0[0]:.4f}, {x0[1]:.2f}")
+        num_iter = 1000
 
 
-    start_time_bfgs = time.time()
+        start_time_bfgs = time.time()
 
-    # reset history lists before running BFGS to avoid carrying data from previous runs
-    history_grad_bfgs.clear()
-    history_bfgs_D.clear()
-    history_bfgs_fs.clear()
+        # reset history lists before running BFGS to avoid carrying data from previous runs
+        history_grad_bfgs.clear()
+        history_bfgs_D.clear()
+        history_bfgs_fs.clear()
 
-    result_bfgs = minimize(
-        fun,
-        x0,
-        method='BFGS',
-        jac=grad_function,
-        callback=callback_bfgs,
-        options={'gtol': 1e-4, "maxiter":num_iter}
-    )
+        result_bfgs = minimize(
+            fun,
+            x0,
+            method='BFGS',
+            jac=grad_function,
+            callback=callback_bfgs,
+            options={'gtol': 1e-4, "maxiter":num_iter}
+        )
 
-    end_time_bfgs = time.time()
-    time_bfgs = end_time_bfgs - start_time_bfgs
+        end_time_bfgs = time.time()
+        time_bfgs = end_time_bfgs - start_time_bfgs
 
-    start_time_sd = time.time()
-    x_sd, f_sd, num_iter_sd, history_grad_sd, history_sd_D, history_sd_fs = steepest_descent(function=fun, gradient=grad_function, x_init=x0, alpha=0.01, tol=1e-6, num_iter=num_iter)
-    end_time_sd = time.time()
-    time_sd = end_time_sd - start_time_sd
-
-    print("Steepest-Descent Method (SD)")
-    print("--------------------|-------------------------")
-    print(f"Iterações (nit)         | {num_iter_sd:<23} ")
-    print(f"Avaliações Função       | {num_iter_sd:<23}")
-    print(f"Avaliações Gradiente    | {num_iter_sd:<23}")
-    print(f"Valor Final f(x)        | {f_sd:<23.6e}")
-    print(f"Ponto encontrado (D,fs))| {x_sd}")
-    print(f"Tempo Total             | {time_sd:<23.8f}")
-    print(f"Tempo por iteração      | {time_sd/num_iter_sd:<23.8f}")
-
-
-    print("BFGS (Quase-Newton)")
-    print("--------------------|-------------------------")
-    print(f"Iterações (nit)         | {result_bfgs.nit:<23} ")
-    print(f"Avaliações Função       | {result_bfgs.nfev:<23}")
-    print(f"Avaliações Gradiente    | {result_bfgs.njev:<23}")
-    print(f"Valor Final f(x)        | {result_bfgs.fun:<23.6e}")
-    print(f"Ponto encontrado (D,fs))| {result_bfgs.x}")
-    print(f"Tempo Total             | {time_bfgs:<23.8f}")
-    print(f"Tempo por iteração      | {time_bfgs/result_bfgs.nit:<23.8f}")
-
-    #Evolução o gradiente
-    plt.figure(1,figsize=(15, 6))
-    plt.semilogy(history_grad_sd, label='Stepeest-Descent Method (SD)', marker='x', markersize=4)
-    plt.semilogy(history_grad_bfgs, label='Quase-Newton BFGS', marker='x', markersize=8)
-
-    plt.title('Curvas de convergência (log||g|| vs Iterações)', fontsize=14)
-    plt.xlabel('Número de Iterações (k)', fontsize=12)
-    plt.ylabel('log||g|| (Escala Logarítmica)', fontsize=12)
-    plt.legend()
-    plt.grid(True, which="both", ls="--")
+        start_time_sd = time.time()
+        x_sd, f_sd, num_iter_sd, history_grad_sd, history_sd_D, history_sd_fs = steepest_descent(function=fun, gradient=grad_function, x_init=x0, alpha=0.01, tol=1e-6, num_iter=num_iter)
+        end_time_sd = time.time()
+        time_sd = end_time_sd - start_time_sd
+        print("\nResultados da Otimização:\n")
+        print(f'Condição inicial (D, fs): {x0[0]:.4f}, {x0[1]:.2f}\n')
+        print("Steepest-Descent Method (SD)")
+        print("--------------------|-------------------------")
+        print(f"Iterações (nit)         | {num_iter_sd:<23} ")
+        print(f"Avaliações Função       | {num_iter_sd:<23}")
+        print(f"Avaliações Gradiente    | {num_iter_sd:<23}")
+        print(f"Valor Final f(x)        | {f_sd:<23.6e}")
+        print(f"Ponto encontrado (D,fs))| {x_sd}")
+        print(f"Tempo Total             | {time_sd:<23.8f} s")
+        print(f"Tempo por iteração      | {time_sd/num_iter_sd:<23.8f} s")
 
 
+        print("BFGS (Quase-Newton)")
+        print("--------------------|-------------------------")
+        print(f"Iterações (nit)         | {result_bfgs.nit:<23} ")
+        print(f"Avaliações Função       | {result_bfgs.nfev:<23}")
+        print(f"Avaliações Gradiente    | {result_bfgs.njev:<23}")
+        print(f"Valor Final f(x)        | {result_bfgs.fun:<23.6e}")
+        print(f"Ponto encontrado (D,fs))| {result_bfgs.x}")
+        print(f"Tempo Total             | {time_bfgs:<23.8f} s")
+        print(f"Tempo por iteração      | {time_bfgs/result_bfgs.nit:<23.8f} s")
 
-    plt.figure(2, figsize=(15, 7))
+        #Evolução do gradiente
+        plt.figure(1,figsize=(12, 8))
+        plt.semilogy(history_grad_sd, label='Stepeest-Descent Method (SD)', marker='x', markersize=4)
+        plt.semilogy(history_grad_bfgs, label='Quase-Newton BFGS', marker='x', markersize=8)
 
-    #Evolução da variável D
-    plt.subplot(1, 2, 1)
-    plt.plot(history_sd_D, label='Stepeest-Descent Method (SD)', marker='o', markersize=4)
-    plt.plot(history_bfgs_D, label='Quase-Newton BFGS', marker='x', markersize=8)
+        plt.title('Curvas de convergência (log||g|| vs Iterações)', fontsize=14)
+        plt.xlabel('Número de Iterações (k)', fontsize=12)
+        plt.ylabel('log||g|| (Escala Logarítmica)', fontsize=12)
+        plt.legend()
+        plt.grid(True, which="both", ls="--")
+        plt.tight_layout()
+        plt.show()
 
-    plt.title('Evolução da variável D vs Iterações', fontsize=12)
-    plt.xlabel('Número de Iterações (k)', fontsize=10)
-    plt.ylabel('D (Ciclo de Trabalho)', fontsize=10)
-    plt.legend()
-    plt.grid(True, which="both", ls="--")
+        # Gráfico da variável D
+        plt.figure(2, figsize=(12, 8))
+        plt.plot(history_sd_D, label='Steepest-Descent Method (SD)', marker='o', markersize=4)
+        plt.plot(history_bfgs_D, label='Quase-Newton BFGS', marker='x', markersize=8)
+        plt.title(f'Evolução da variável D vs Iterações - Loop {loop}')
+        plt.xlabel('Número de Iterações')
+        plt.ylabel('Razão cíclica (D)')
+        plt.legend()
+        plt.grid(True, which="both", ls="--")
+        plt.tight_layout()
+        plt.ticklabel_format(useOffset=False, style='plain')
+        plt.show()
 
-    #Evolução da variável fs
-    plt.subplot(1, 2, 2)
-    plt.plot(history_sd_fs, label='Stepeest-Descent Method (SD)', marker='o', markersize=4)
-    plt.plot(history_bfgs_fs, label='Quase-Newton BFGS', marker='x', markersize=8)
-
-    plt.title('Evolução da variável fs vs Iterações', fontsize=12)
-    plt.xlabel('Número de Iterações (k)', fontsize=10)
-    plt.ylabel('fs (Freq de chaveamento)', fontsize=10)
-    plt.legend()
-    plt.grid(True, which="both", ls="--")
-
-    plt.show()
+        # Gráfico da variável fs
+        plt.figure(3, figsize=(12, 7))
+        plt.plot(history_sd_fs, label='Steepest-Descent Method (SD)', marker='o', markersize=4)
+        plt.plot(history_bfgs_fs, label='Quase-Newton BFGS', marker='x', markersize=8)
+        plt.title(f'Evolução da variável fs vs Iterações - Loop {loop}', fontsize=12)
+        plt.xlabel('Número de Iterações', fontsize=10)
+        plt.ylabel('Frequência de chaveamento (fs)', fontsize=10)
+        plt.legend()
+        plt.grid(True, which="both", ls="--")
+        plt.tight_layout()
+        plt.ticklabel_format(useOffset=False, style='plain')
+        plt.show()
 
 if __name__ == "__main__":
     main()
